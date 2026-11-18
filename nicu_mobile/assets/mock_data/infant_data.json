@@ -1,0 +1,21 @@
+{
+  "infant_id": "NICU_001",
+  "timestamp": 1794500000,
+  "vitals": {
+    "respiration_rate": 45,
+    "stress_score": 25.5,
+    "posture": "normal",
+    "movement_status": "normal",
+    "anomaly_detected": false
+  },
+  "pose": {
+    "shoulder_position": [0.45, 0.32],  
+    "hip_position": [0.48, 0.72],
+    "orientation": "supine"
+  },
+  "alert": {
+    "is_active": false,
+    "severity": "normal",
+    "message": null
+  }
+}
