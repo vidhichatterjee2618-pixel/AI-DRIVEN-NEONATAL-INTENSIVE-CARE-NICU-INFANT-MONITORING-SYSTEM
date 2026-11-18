@@ -1,0 +1,28 @@
+{
+  "name": "nicu-3d-visualization",
+  "version": "1.0.0",
+  "description": "AI-Driven Neonatal Intensive Care (NICU) Infant Monitoring System - 3D Visualization Module",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "python -m http.server 3000"
+  },
+  "dependencies": {
+    "three": "^0.160.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  },
+  "keywords": [
+    "threejs",
+    "nicu",
+    "neonatal",
+    "3d-visualization",
+    "infant-monitoring",
+    "telemetry"
+  ],
+  "author": "NICU Visualization Team",
+  "license": "MIT"
+}

@@ -1,0 +1,245 @@
+{
+  "test_cases": [
+    {
+      "id": "test_1_complete",
+      "name": "TEST 1: Complete Normal Supine",
+      "description": "Standard baseline data with complete coordinates and vitals",
+      "data": {
+        "pose": {
+          "shoulder_position": [0.45, 0.32],
+          "hip_position": [0.48, 0.72],
+          "orientation": "supine"
+        },
+        "vitals": {
+          "respiration_rate": 45,
+          "stress_score": 25.5,
+          "posture": "normal",
+          "movement_status": "normal"
+        }
+      }
+    },
+    {
+      "id": "test_2_missing_shoulders",
+      "name": "TEST 2: Missing Shoulder Coordinates",
+      "description": "Shoulder position is null; hip position preserved; pose marked stale",
+      "data": {
+        "pose": {
+          "shoulder_position": null,
+          "hip_position": [0.48, 0.72],
+          "orientation": "supine"
+        },
+        "vitals": {
+          "respiration_rate": 44,
+          "stress_score": 26.0,
+          "posture": "normal",
+          "movement_status": "rest"
+        }
+      }
+    },
+    {
+      "id": "test_3_missing_hips",
+      "name": "TEST 3: Missing Hip Coordinates",
+      "description": "Hip position missing/null; shoulder position preserved",
+      "data": {
+        "pose": {
+          "shoulder_position": [0.44, 0.30],
+          "hip_position": null,
+          "orientation": "supine"
+        },
+        "vitals": {
+          "respiration_rate": 46,
+          "stress_score": 24.0,
+          "posture": "normal",
+          "movement_status": "rest"
+        }
+      }
+    },
+    {
+      "id": "test_4_missing_respiration",
+      "name": "TEST 4: Missing Respiration Rate",
+      "description": "Respiration rate is null/absent; animation pauses and marks unavailable",
+      "data": {
+        "pose": {
+          "shoulder_position": [0.45, 0.32],
+          "hip_position": [0.48, 0.72],
+          "orientation": "supine"
+        },
+        "vitals": {
+          "respiration_rate": null,
+          "stress_score": 28.0,
+          "posture": "normal",
+          "movement_status": "normal"
+        }
+      }
+    },
+    {
+      "id": "test_5_missing_stress",
+      "name": "TEST 5: Missing Stress Score",
+      "description": "Stress score missing; heatmap stays neutral and displays Unavailable",
+      "data": {
+        "pose": {
+          "shoulder_position": [0.45, 0.32],
+          "hip_position": [0.48, 0.72],
+          "orientation": "supine"
+        },
+        "vitals": {
+          "respiration_rate": 42,
+          "stress_score": null,
+          "posture": "normal",
+          "movement_status": "normal"
+        }
+      }
+    },
+    {
+      "id": "test_6_invalid_coordinates",
+      "name": "TEST 6: Invalid Coordinate Format",
+      "description": "Out-of-range coordinates [1.45, -0.20]; safely rejected without crash",
+      "data": {
+        "pose": {
+          "shoulder_position": [1.45, -0.20],
+          "hip_position": [0.48, 0.72],
+          "orientation": "supine"
+        },
+        "vitals": {
+          "respiration_rate": 45,
+          "stress_score": 25.5,
+          "posture": "normal",
+          "movement_status": "normal"
+        }
+      }
+    },
+    {
+      "id": "test_7_invalid_json",
+      "name": "TEST 7: Invalid Malformed JSON String",
+      "description": "Malformed syntax { pose: incomplete ... }",
+      "raw_string": "{ \"pose\": { \"shoulder_position\": [0.45, broken"
+    },
+    {
+      "id": "test_8_unknown_orientation",
+      "name": "TEST 8: Unknown Orientation",
+      "description": "Orientation is unknown; avatar maintains stable neutral rotation with warning",
+      "data": {
+        "pose": {
+          "shoulder_position": [0.45, 0.32],
+          "hip_position": [0.48, 0.72],
+          "orientation": "unknown"
+        },
+        "vitals": {
+          "respiration_rate": 40,
+          "stress_score": 30.0,
+          "posture": "flexed",
+          "movement_status": "active"
+        }
+      }
+    },
+    {
+      "id": "test_9_prone_orientation",
+      "name": "TEST 9: Prone Orientation",
+      "description": "Infant lying prone (tummy-down), smooth rotation update",
+      "data": {
+        "pose": {
+          "shoulder_position": [0.46, 0.34],
+          "hip_position": [0.49, 0.70],
+          "orientation": "prone"
+        },
+        "vitals": {
+          "respiration_rate": 48,
+          "stress_score": 35.0,
+          "posture": "prone_resting",
+          "movement_status": "quiet"
+        }
+      }
+    },
+    {
+      "id": "test_10_left_lateral",
+      "name": "TEST 10: Left Lateral Orientation",
+      "description": "Infant turned on left side",
+      "data": {
+        "pose": {
+          "shoulder_position": [0.40, 0.35],
+          "hip_position": [0.42, 0.74],
+          "orientation": "left lateral"
+        },
+        "vitals": {
+          "respiration_rate": 43,
+          "stress_score": 22.0,
+          "posture": "curled",
+          "movement_status": "minimal"
+        }
+      }
+    },
+    {
+      "id": "test_11_right_lateral",
+      "name": "TEST 11: Right Lateral Orientation",
+      "description": "Infant turned on right side",
+      "data": {
+        "pose": {
+          "shoulder_position": [0.55, 0.33],
+          "hip_position": [0.53, 0.71],
+          "orientation": "right lateral"
+        },
+        "vitals": {
+          "respiration_rate": 44,
+          "stress_score": 27.0,
+          "posture": "lateral_sleep",
+          "movement_status": "calm"
+        }
+      }
+    },
+    {
+      "id": "test_12_zero_vs_unavailable",
+      "name": "TEST 12: Zero Respiration (Distinguished from Unavailable)",
+      "description": "Explicit zero reading vs missing/null reading",
+      "data": {
+        "pose": {
+          "shoulder_position": [0.45, 0.32],
+          "hip_position": [0.48, 0.72],
+          "orientation": "supine"
+        },
+        "vitals": {
+          "respiration_rate": 0,
+          "stress_score": 0.0,
+          "posture": "apnea_check",
+          "movement_status": "none"
+        }
+      }
+    },
+    {
+      "id": "test_13_heart_rate_supplied",
+      "name": "TEST 13: Optional Heart Rate Supplied",
+      "description": "Demonstrates backward-compatible optional vitals.heart_rate (138 bpm) with precordial pulse",
+      "data": {
+        "pose": {
+          "shoulder_position": [0.45, 0.32],
+          "hip_position": [0.48, 0.72],
+          "orientation": "supine"
+        },
+        "vitals": {
+          "respiration_rate": 45,
+          "heart_rate": 138,
+          "stress_score": 25.5,
+          "posture": "normal",
+          "movement_status": "normal"
+        }
+      }
+    },
+    {
+      "id": "test_14_heart_rate_omitted",
+      "name": "TEST 14: Heart Rate Omitted (100% Backward Compatible)",
+      "description": "Heart rate field completely omitted; displays 'Not Supplied' without error",
+      "data": {
+        "pose": {
+          "shoulder_position": [0.45, 0.32],
+          "hip_position": [0.48, 0.72],
+          "orientation": "supine"
+        },
+        "vitals": {
+          "respiration_rate": 45,
+          "stress_score": 25.5,
+          "posture": "normal",
+          "movement_status": "normal"
+        }
+      }
+    }
+  ]
+}

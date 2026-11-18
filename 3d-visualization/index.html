@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NICU Infant Monitoring - 3D Visualization Module</title>
+  <link rel="stylesheet" href="src/styles/style.css">
+  
+  <!-- Import Map for Modern Standalone ES Module Three.js -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Dashboard Top Header -->
+  <header class="dashboard-header">
+    <div class="brand">
+      <span class="brand-icon">🩺</span>
+      <span class="brand-title">NICU 3D VISUALIZATION</span>
+      <span class="brand-subtitle">AI-Driven Infant Monitoring System</span>
+    </div>
+    <div class="header-badges">
+      <span id="badge-mode" class="mode-badge">MOCK TELEMETRY</span>
+      <span id="badge-firebase" class="status-tag status-unavailable" title="Firebase Realtime Database / Firestore status">FB: STANDBY</span>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">PBL College Demonstration</span>
+    </div>
+  </header>
+
+  <!-- Main Grid Layout -->
+  <main class="dashboard-grid">
+
+    <!-- LEFT PANEL: 3D Visualization Viewport -->
+    <section class="viewport-panel">
+      <!-- Top Overlay: Orientation & Tracking Status -->
+      <div class="viewport-overlay-top">
+        <span id="val-orientation" class="badge badge-normal">SUPINE</span>
+        <span id="status-tracking" class="status-tag status-active">Full Landmark Tracking (2/2)</span>
+      </div>
+
+      <!-- Camera Preset Controls -->
+      <div class="viewport-overlay-controls">
+        <button class="cam-btn" data-cam-preset="top">Top View</button>
+        <button class="cam-btn" data-cam-preset="lateral">Side View</button>
+        <button class="cam-btn" data-cam-preset="front">Front View</button>
+        <button class="cam-btn" data-cam-preset="reset">Reset Camera</button>
+      </div>
+
+      <!-- 3D Canvas Mounting Container -->
+      <div id="canvas3d-container"></div>
+
+      <!-- Bottom Overlay: Navigation Hints -->
+      <div class="viewport-overlay-bottom">
+        <span>Left-click + drag: Rotate | Right-click + drag: Pan | Scroll: Zoom</span>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: Telemetry, Vitals & Heatmap -->
+    <aside class="telemetry-panel">
+      <div class="telemetry-title">Telemetry & Patient Vitals</div>
+
+      <!-- Respiration Card -->
+      <div class="vital-card">
+        <div class="vital-card-header">
+          <h3>RESPIRATION RATE</h3>
+          <span id="status-respiration" class="status-tag status-active">Active Breathing</span>
+        </div>
+        <div class="vital-reading-row">
+          <span id="val-respiration" class="vital-num">45</span>
+          <span class="vital-unit">bpm</span>
+        </div>
+        <div style="font-size: 0.7rem; color: var(--text-muted);">
+          Dynamic chest wall expansion driven by JSON telemetry
+        </div>
+      </div>
+
+      <!-- Heart Rate Card (Optional vitals.heart_rate) -->
+      <div class="vital-card">
+        <div class="vital-card-header">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span id="icon-heartbeat" class="heart-icon">❤️</span>
+            <h3>HEART RATE</h3>
+          </div>
+          <span id="status-heartrate" class="status-tag status-unavailable">Not Supplied</span>
+        </div>
+        <div class="vital-reading-row">
+          <span id="val-heartrate" class="vital-num text-muted">--</span>
+          <span class="vital-unit">bpm</span>
+        </div>
+        <div style="font-size: 0.7rem; color: var(--text-muted);">
+          Optional vitals field • Precordial cardiac pulse visualization
+        </div>
+      </div>
+
+      <!-- Stress Indicator Card -->
+      <div class="vital-card">
+        <div class="vital-card-header">
+          <h3>STRESS METRIC</h3>
+          <span id="status-stress" class="status-tag status-active">Low Index</span>
+        </div>
+        <div class="vital-reading-row">
+          <span id="val-stress" class="vital-num">25.5</span>
+          <span class="vital-unit">index</span>
+        </div>
+        <!-- Visual Stress Bar -->
+        <div class="stress-meter-track">
+          <div id="stress-meter-bar" class="stress-meter-fill"></div>
+        </div>
+        <div style="font-size: 0.7rem; color: var(--text-muted);">
+          Material overlay modulates infant skin tone dynamically
+        </div>
+      </div>
+
+      <!-- Stress Heatmap Legend -->
+      <div class="vital-card">
+        <div class="vital-card-header">
+          <h3>HEATMAP COLOR SPECTRUM</h3>
+        </div>
+        <div class="heatmap-legend">
+          <div class="legend-bar"></div>
+          <div class="legend-labels">
+            <span>Calm / Low</span>
+            <span>Baseline</span>
+            <span>Elevated</span>
+          </div>
+        </div>
+        <div style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.2;">
+          *Illustrative visualization scale. Does not represent clinical diagnostic thresholds.
+        </div>
+      </div>
+
+      <!-- Posture & Movement Badges -->
+      <div class="indicators-grid">
+        <div class="indicator-box">
+          <div class="indicator-label">Posture</div>
+          <span id="val-posture" class="badge badge-normal">NORMAL</span>
+        </div>
+        <div class="indicator-box">
+          <div class="indicator-label">Movement</div>
+          <span id="val-movement" class="badge badge-normal">NORMAL</span>
+        </div>
+      </div>
+
+      <!-- Connection & Timestamp Card -->
+      <div class="vital-card">
+        <div class="vital-card-header">
+          <h3>PACKET TELEMETRY</h3>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.75rem;">
+          <span style="color: var(--text-muted);">Last Update:</span>
+          <strong id="val-timestamp">--:--:--.---</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.75rem;">
+          <span style="color: var(--text-muted);">Contract:</span>
+          <span style="color: var(--accent-cyan); font-weight: 600;">Agreed JSON v1.0</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- BOTTOM PANEL: Interactive Controls, Test Cases, & Alert Console -->
+    <footer class="control-panel">
+      <div class="control-bar">
+        <div class="btn-group">
+          <button id="btn-load-mock" class="btn btn-primary">
+            <span>🔄</span> Load Agreed Mock Data
+          </button>
+          <button id="btn-simulate" class="btn">
+            <span>▶</span> Simulate Live Monitoring
+          </button>
+          <button id="btn-reset" class="btn">
+            <span>↺</span> Reset View
+          </button>
+          <button id="btn-open-json-modal" class="btn">
+            <span>📝</span> Inject Custom JSON
+          </button>
+        </div>
+
+        <div class="btn-group">
+          <!-- Section 16 Edge Case Selector -->
+          <select id="select-test-case" class="test-select">
+            <option value="">-- Run Edge Case Test (Section 16) --</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Developer Alert & Validation Console -->
+      <div id="alert-console" class="console-box">
+        <span class="log-ok">● Initializing JSON contract parser and 3D renderer...</span>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- Custom JSON Injection Modal -->
+  <div id="json-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Inject Custom JSON Telemetry</h2>
+        <button id="btn-close-json-modal" class="btn" style="padding: 2px 8px;">✕</button>
+      </div>
+      <p style="font-size: 0.75rem; color: var(--text-muted);">
+        Paste or edit telemetry matching the common JSON data contract:
+      </p>
+      <textarea id="custom-json-input" class="json-textarea"></textarea>
+      <div style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button id="btn-inject-json" class="btn btn-primary">Validate & Inject</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Entry Script -->
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

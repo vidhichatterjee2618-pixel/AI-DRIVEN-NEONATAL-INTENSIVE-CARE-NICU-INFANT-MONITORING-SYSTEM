@@ -1,0 +1,13 @@
+{
+  "pose": {
+    "shoulder_position": [0.45, 0.32],
+    "hip_position": [0.48, 0.72],
+    "orientation": "supine"
+  },
+  "vitals": {
+    "respiration_rate": 45,
+    "stress_score": 25.5,
+    "posture": "normal",
+    "movement_status": "normal"
+  }
+}
